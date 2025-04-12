@@ -1,4 +1,4 @@
-# Random Word Generator App
+# Persistent Random Word Generator App
 
 | Name                     | NRP        | Class                              |
 | ------------------------ | ---------- | ---------------------------------- |
@@ -75,8 +75,8 @@ lib/
 1. Clone the repository
 
 ```bash
-git clone https://github.com/ainunns/random_word_generator.git
-cd random_word_generator
+git clone https://github.com/ainunns/persistent_random_word_generator.git
+cd persistent_random_word_generator
 ```
 
 2. Install dependencies

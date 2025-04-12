@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:random_word_generator/screens/generator_page.dart';
-import 'package:random_word_generator/screens/favorites_page.dart';
+import 'package:persistent_random_word_generator/screens/generator_page.dart';
+import 'package:persistent_random_word_generator/screens/favorites_page.dart';
 
 class MyHomePage extends StatefulWidget {
   @override

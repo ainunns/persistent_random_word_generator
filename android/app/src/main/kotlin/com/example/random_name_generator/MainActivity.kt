@@ -1,4 +1,4 @@
-package com.example.random_word_generator
+package com.example.persistent_random_word_generator
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:random_word_generator/providers/app_state.dart';
-import 'package:random_word_generator/screens/home_page.dart';
+import 'package:persistent_random_word_generator/providers/app_state.dart';
+import 'package:persistent_random_word_generator/screens/home_page.dart';
 
 void main() {
   runApp(const MyApp());

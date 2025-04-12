@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:random_word_generator/providers/app_state.dart';
+import 'package:persistent_random_word_generator/providers/app_state.dart';
 
 class HistoryListView extends StatefulWidget {
   const HistoryListView({super.key});

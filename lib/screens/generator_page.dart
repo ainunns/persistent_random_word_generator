@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:random_word_generator/providers/app_state.dart';
-import 'package:random_word_generator/widgets/big_card.dart';
-import 'package:random_word_generator/widgets/history_list_view.dart';
+import 'package:persistent_random_word_generator/providers/app_state.dart';
+import 'package:persistent_random_word_generator/widgets/big_card.dart';
+import 'package:persistent_random_word_generator/widgets/history_list_view.dart';
 
 class GeneratorPage extends StatelessWidget {
   @override
