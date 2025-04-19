@@ -1,37 +1,50 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_random_word_generator/models/words.dart';
+import 'package:persistent_random_word_generator/repository/objectbox.dart';
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-  var history = <WordPair>[];
-
+  late final ObjectBox _objectBox;
+  Word? _current;
   GlobalKey? historyListKey;
 
-  void getNext() {
-    history.insert(0, current);
-
-    var animatedList = historyListKey?.currentState as AnimatedListState?;
-    animatedList?.insertItem(0);
-
-    current = WordPair.random();
-    notifyListeners();
+  MyAppState(this._objectBox) {
+    _current = _objectBox.getCurrent();
   }
 
-  var favorites = <WordPair>[];
+  Word get current => _current ?? Word(word: WordPair.random().asString);
 
-  void toggleFavorite([WordPair? pair]) {
-    pair = pair ?? current;
+  Stream<List<Word>> get history => _objectBox.getHistoryStream();
+  Stream<List<Word>> get favorites => _objectBox.getFavoritesStream();
 
-    if (favorites.contains(pair)) {
-      favorites.remove(pair);
-    } else {
-      favorites.add(pair);
+  Future<void> getNext() async {
+    try {
+      if (_current != null) {
+        // Add current word to history first and wait for completion
+        _objectBox.addToHistory(_current!);
+      }
+
+      // Generate new word only after history is updated
+      _current = Word(
+        word: WordPair.random().asString,
+        createdAt: DateTime.now(),
+      );
+
+      notifyListeners();
+    } catch (e) {
+      print('Error in getNext: $e');
     }
+  }
+
+  void toggleFavorite([Word? word]) {
+    word = word ?? current;
+
+    _objectBox.toggleFavorite(word);
     notifyListeners();
   }
 
-  void removeFavorite(WordPair pair) {
-    favorites.remove(pair);
+  void removeFavorite(Word word) async {
+    _objectBox.removeFavorite(word);
     notifyListeners();
   }
 }

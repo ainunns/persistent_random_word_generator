@@ -20,4 +20,18 @@ class Word {
   }) : createdAt = createdAt ?? DateTime.now(),
        updatedAt = updatedAt ?? DateTime.now(),
        deletedAt = deletedAt ?? DateTime(0);
+
+  String get asLowerCase => word.toLowerCase();
+  String get asPascalCase => word;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Word &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          word == other.word;
+
+  @override
+  int get hashCode => id.hashCode ^ word.hashCode ^ isFavorite.hashCode;
 }

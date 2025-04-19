@@ -1,10 +1,10 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_random_word_generator/models/words.dart';
 
 class BigCard extends StatelessWidget {
   const BigCard({super.key, required this.pair});
 
-  final WordPair pair;
+  final Word pair;
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +23,8 @@ class BigCard extends StatelessWidget {
             child: Wrap(
               children: [
                 Text(
-                  pair.first,
+                  pair.word,
                   style: style.copyWith(fontWeight: FontWeight.w200),
-                ),
-                Text(
-                  pair.second,
-                  style: style.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),

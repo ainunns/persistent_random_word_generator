@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_random_word_generator/models/words.dart';
 import 'package:provider/provider.dart';
 import 'package:persistent_random_word_generator/providers/app_state.dart';
 
@@ -10,7 +11,8 @@ class HistoryListView extends StatefulWidget {
 }
 
 class _HistoryListViewState extends State<HistoryListView> {
-  final _key = GlobalKey();
+  final _key = GlobalKey<AnimatedListState>();
+  List<Word> _previousHistory = [];
 
   static const Gradient _maskingGradient = LinearGradient(
     colors: [Colors.transparent, Colors.black],
@@ -27,31 +29,60 @@ class _HistoryListViewState extends State<HistoryListView> {
     return ShaderMask(
       shaderCallback: (bounds) => _maskingGradient.createShader(bounds),
       blendMode: BlendMode.dstIn,
-      child: AnimatedList(
-        key: _key,
-        reverse: true,
-        padding: EdgeInsets.only(top: 100),
-        initialItemCount: appState.history.length,
-        itemBuilder: (context, index, animation) {
-          final pair = appState.history[index];
+      child: StreamBuilder<List<Word>>(
+        stream: appState.history,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          return SizeTransition(
-            sizeFactor: animation,
-            child: Center(
-              child: TextButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite(pair);
-                },
-                icon:
-                    appState.favorites.contains(pair)
-                        ? Icon(Icons.favorite, size: 12)
-                        : SizedBox(),
-                label: Text(
-                  pair.asLowerCase,
-                  semanticsLabel: pair.asPascalCase,
+          final history = snapshot.data!;
+
+          // Check if we need to animate a new item
+          if (history.length > _previousHistory.length) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _key.currentState?.insertItem(0);
+            });
+          }
+          _previousHistory = List.from(history);
+
+          return AnimatedList(
+            key: _key,
+            reverse: true,
+            padding: const EdgeInsets.only(top: 100),
+            initialItemCount: history.length,
+            itemBuilder: (context, index, animation) {
+              if (index >= history.length) {
+                return const SizedBox();
+              }
+
+              final word = history[index];
+
+              return SizeTransition(
+                sizeFactor: animation,
+                child: Center(
+                  child: TextButton.icon(
+                    onPressed: () {
+                      appState.toggleFavorite(word);
+                    },
+                    icon: StreamBuilder<List<Word>>(
+                      stream: appState.favorites,
+                      builder: (context, snapshot) {
+                        final isFavorite =
+                            snapshot.data?.contains(word) ?? false;
+                        return isFavorite
+                            ? const Icon(Icons.favorite, size: 12)
+                            : const SizedBox();
+                      },
+                    ),
+                    label: Text(
+                      word.asLowerCase,
+                      semanticsLabel: word.asPascalCase,
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),

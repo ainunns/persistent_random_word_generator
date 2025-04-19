@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:english_words/english_words.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -40,5 +40,59 @@ class ObjectBox {
     );
 
     return ObjectBox._create(store);
+  }
+
+  /// Generate a new word and add it to the database.
+  Word getCurrent() {
+    final allWords = _wordBox.getAll();
+    if (allWords.isEmpty) {
+      final newWord = Word(
+        word: WordPair.random().asString,
+        createdAt: DateTime.now(),
+      );
+      _wordBox.put(newWord);
+      return newWord;
+    }
+    return allWords[0];
+  }
+
+  /// Add a word to the database.
+  void addToHistory(Word word) {
+    _wordBox.put(word);
+  }
+
+  /// Get all words from the database.
+  Stream<List<Word>> getHistoryStream() {
+    return _wordBox
+        .query(Word_.deletedAt.equals(DateTime(0).millisecondsSinceEpoch))
+        .order(Word_.createdAt, flags: Order.descending)
+        .watch(triggerImmediately: true)
+        .map((query) => query.find());
+  }
+
+  /// Get all favorite words from the database.
+  Stream<List<Word>> getFavoritesStream() {
+    return _wordBox
+        .query(
+          Word_.isFavorite.equals(true) &
+              Word_.deletedAt.equals(DateTime(0).millisecondsSinceEpoch),
+        )
+        .order(Word_.createdAt, flags: Order.descending)
+        .watch(triggerImmediately: true)
+        .map((query) => query.find());
+  }
+
+  /// Update a word in the database.
+  void toggleFavorite(Word word) {
+    word.isFavorite = !word.isFavorite;
+    word.updatedAt = DateTime.now();
+    _wordBox.put(word);
+  }
+
+  /// Delete a favorite word from the database.
+  void removeFavorite(Word word) {
+    word.isFavorite = false;
+    word.updatedAt = DateTime.now();
+    _wordBox.put(word);
   }
 }
